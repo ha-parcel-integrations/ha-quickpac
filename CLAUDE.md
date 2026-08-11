@@ -105,7 +105,9 @@ more (`>=3000 -> delivered`, `>=4000 -> exception`) — both `3xxx`/`4xxx` are
   already reports `at_pickup_point`. Don't port a GLS-style pre-arrival
   pickup sensor to this carrier without first getting that signal via the
   token (see the "one real decision" above).
-- **`weight`/`dimensions` are always `None`** — not in the schema.
+- **`weight`/`dimensions` are always `None`** — not in the schema. Reflected in
+  `const.py`'s `CAPABILITIES` (feeds the docs site's comparison table) — keep
+  the two in agreement if that ever changes.
 - **A `400` is never trusted at face value.** It is Quickpac's only
   "unknown/not-yet-registered code" signal, but it is *also* what a broken
   route returns (no `Detail` field to tell them apart) — `api.py` pairs every
