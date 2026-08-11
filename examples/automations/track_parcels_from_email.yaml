@@ -1,0 +1,100 @@
+# Extract a Quickpac tracking code from incoming e-mail and register it with
+# `quickpac.track_parcel`, so parcels start tracking the moment the shipping
+# confirmation lands in your inbox — no manual entry.
+#
+# AI-only, deliberately: Quickpac identcodes are **plain digits with no
+# letter prefix** and no confirmed length (see CLAUDE.md and
+# carrier-research/api/quickpac/tracking.md — no real identcode has ever been
+# captured). A bare digit-string regex would match order numbers, invoice
+# numbers and phone numbers just as readily as a tracking code, so there is
+# no safe fast-path regex to write yet. This recipe goes straight to the AI
+# fallback and relies on it to tell a tracking code apart from other numbers
+# in context. Once a real identcode's shape is confirmed, add a regex path
+# here (see ha-planzer's or ha-dragonfly's example for the pattern) and open
+# an issue/PR so the next person benefits.
+#
+# Requirements:
+#   - an `ai_task` entity (e.g. Anthropic/Claude, Google, OpenAI) — required
+#     here, not optional, since there is no regex fallback
+#   - one or more core IMAP config entries with "text" enabled under
+#     "message data" and the max message size raised (carrier mails are
+#     long) — full setup guide and pitfalls: track_parcels_from_email.md
+#   - PRIVACY: by default this fires on EVERY incoming mail and sends mail
+#     bodies to your AI Task. Scope the IMAP search to Quickpac's sender
+#     first — see "Scope & privacy" in the .md.
+
+alias: "Quickpac: track from e-mail"
+description: >-
+  Listens to imap_content events from all IMAP entries. No confirmed
+  tracking-code shape exists yet, so every candidate mail goes through the AI
+  fallback rather than a regex fast path.
+mode: queued
+max: 10
+
+triggers:
+  - trigger: event
+    event_type: imap_content
+
+variables:
+  sender: "{{ trigger.event.data.sender | default('') | lower }}"
+  subject: "{{ trigger.event.data.subject | default('') }}"
+  body: "{{ trigger.event.data.text | default('') }}"
+  content: "{{ subject ~ ' ' ~ body }}"
+  # Keyword gate for the AI fallback — localise to your language(s).
+  is_parcel_mail: >-
+    {{ content | lower is search('paket|versand|abholung|track|unterwegs|zustellung|shipment|delivery|pickup') }}
+
+conditions:
+  # initial=true means "new message"; false means a duplicate trigger of
+  # the SAME message (e.g. after a reconnect) — requiring it is free dedup.
+  - condition: template
+    value_template: "{{ trigger.event.data.initial | default(true) }}"
+  - condition: template
+    value_template: "{{ is_parcel_mail }}"
+
+actions:
+  - action: ai_task.generate_data
+    data:
+      task_name: quickpac-tracking-code-extraction
+      entity_id: ai_task.your_ai_task_entity
+      instructions: >-
+        Below is an e-mail. Determine whether it contains a Quickpac parcel
+        tracking code (Quickpac identcodes are plain digits, no letter
+        prefix — the length is not confirmed, so use context: a shipping
+        confirmation or delivery notification, not an order, customer or
+        invoice number). If the mail is from a different carrier, answer
+        'other'. When in doubt: 'none'.
+
+        Sender: {{ sender }}
+        Subject: {{ subject }}
+        Body:
+        {{ body[:6000] }}
+      structure:
+        carrier:
+          description: Whether a Quickpac tracking code was found
+          required: true
+          selector:
+            select:
+              options: ["quickpac", "other", "none"]
+        tracking_code:
+          description: The tracking code, or empty if none
+          required: false
+          selector:
+            text:
+    response_variable: ai_result
+  - choose:
+      - conditions: "{{ ai_result.data.carrier == 'quickpac' and (ai_result.data.tracking_code | default('') | trim) != '' }}"
+        sequence:
+          - action: quickpac.track_parcel
+            data:
+              tracking_code: "{{ ai_result.data.tracking_code | trim }}"
+          - action: notify.mobile_app_your_phone
+            data:
+              title: "📦 Quickpac parcel picked up from mail (AI)"
+              message: "{{ ai_result.data.tracking_code | trim }} (mail from {{ sender }})"
+      - conditions: "{{ ai_result.data.carrier == 'other' and (ai_result.data.tracking_code | default('') | trim) != '' }}"
+        sequence:
+          - action: notify.mobile_app_your_phone
+            data:
+              title: "📦 Tracking number found – not a Quickpac parcel"
+              message: "{{ ai_result.data.tracking_code | trim }} (mail from {{ sender }}, subject: {{ subject }})"
