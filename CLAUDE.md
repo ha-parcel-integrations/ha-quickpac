@@ -34,7 +34,7 @@ you act in one of these areas:
 
 ## Carrier-specific notes
 
-**API mechanics live in `carrier-research/api/quickpac/` (private research repo)** — the
+**API mechanics live in `carrier-research/quickpac/api/` (private research repo)** — the
 endpoint, the OpenAPI-pinned payload, the status-code table and probe results.
 Do not duplicate them here; this file is HA-integration decisions only.
 
@@ -63,7 +63,7 @@ right.
 `LastStatusCode` (and `Protocol[].Status`, same vocabulary) is a number, not a
 string enum — `_bucket()` in `parcels.py` implements the seven-bucket table
 reverse-engineered from the tracking SPA's own icon-selection JS (deobfuscated
-in `carrier-research/api/quickpac/tracking.md`), not from any Quickpac
+in `carrier-research/quickpac/api/tracking.md`), not from any Quickpac
 documentation.
 
 **`2600` / `2601` / `2604` must resolve to three different canonical statuses**
@@ -178,5 +178,5 @@ python -m pytest tests/ --cov=custom_components.quickpac
 
 Coverage must stay **above 95%** (silver `test-coverage` rule). Run before
 committing. A code change updates the README + this file + `docs/` in the same
-commit; the API reference lives in this carrier's directory under the private
-`carrier-research/api/`, never in this repo.
+commit; the API reference lives in this carrier's own directory under the
+private `carrier-research/quickpac/api/`, never in this repo.
