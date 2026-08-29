@@ -45,7 +45,7 @@ Part of the [ha-parcel-integrations](https://github.com/ha-parcel-integrations) 
 
 ## Requirements
 
-- Home Assistant 2024.7 or newer
+- Home Assistant 2024.12 or newer
 - A Quickpac parcel and its tracking code (a string of digits, no letter
   prefix — from the shipping confirmation e-mail) — no account needed
 
@@ -99,6 +99,10 @@ Standard HA removal applies: **Settings → Devices & Services → Quickpac → 
 | `sensor.quickpac_last_successful_update` | Diagnostic: when Quickpac was last polled successfully |
 
 A delivered parcel moves from its per-parcel sensor to the delivered sensor automatically.
+
+A **`button.quickpac_refresh`** entity triggers an immediate poll outside the
+regular interval, and a **`calendar.quickpac_deliveries`** entity shows
+expected delivery dates for active parcels — read-only, no extra API calls.
 
 ## Parcel status reference
 
