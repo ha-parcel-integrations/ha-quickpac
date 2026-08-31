@@ -45,7 +45,6 @@ Part of the [ha-parcel-integrations](https://github.com/ha-parcel-integrations) 
 
 ## Requirements
 
-- Home Assistant 2024.12 or newer
 - A Quickpac parcel and its tracking code (a string of digits, no letter
   prefix — from the shipping confirmation e-mail) — no account needed
 
