@@ -82,9 +82,8 @@ more (`>=3000 -> delivered`, `>=4000 -> exception`) — both `3xxx`/`4xxx` are
 
 - **`sender`, `receiver`, `pickup_point`, `planned_from`, `planned_to` are
   always `None`.** All of them sit behind `POST GetToken` (surname + postcode
-  as a second factor) — this build ships the public path only. See
-  BUILD_PLAN.md's "one real decision" in the (now-deleted) build plan, folded
-  here: the cost is a surname *and* postcode per parcel stored in the config
+  as a second factor) — this build ships the public path only. The reasoning:
+  the cost is a surname *and* postcode per parcel stored in the config
   entry, `pickup_point` is the only field it would actually fill (the rest is
   free-text or gated fields already `None` on shipped carriers), and
   `at_pickup_point` still works without it. Revisit only if a Swiss user asks
