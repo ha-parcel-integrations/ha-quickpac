@@ -54,7 +54,7 @@ CAPABILITIES = frozenset({"url", "history"})
 # on a 400 — see api.py. It is also the source of the domain's UI vocabulary.
 #
 # ``TRACKING_URL`` is the human-facing deep link the SPA itself writes into
-# its own address bar. Full mechanics: ``carrier-research/api/quickpac/``.
+# its own address bar.
 TRACKING_API_URL = (
     "https://parcelsearch.quickpac.ch/api/ParcelSearch/"
     "GetPublicTracking/{tracking_code}/de/false"
@@ -79,8 +79,7 @@ DEFAULT_DELIVERED_FILTER_TYPE = "days"
 DEFAULT_DELIVERED_FILTER_AMOUNT = 7
 
 # Dynamic, status-driven polling — unconditional, no user-facing interval
-# option. See carrier-research/dynamic-polling.md for the full algorithm and
-# the reasoning behind it.
+# option.
 #
 # Quiet window: no polling between these local hours except the two anchors
 # below, for overnight / end-of-day catch-up.

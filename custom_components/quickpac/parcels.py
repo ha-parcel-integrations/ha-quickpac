@@ -11,8 +11,7 @@ one ``LastStatusCode`` (int) plus a ``Protocol`` list of the same-vocabulary
 events. The status vocabulary is **not** documented by Quickpac — it is
 reverse-engineered from the tracking SPA's own icon-selection logic (see
 :func:`map_parcel_status`), and no populated response has ever been seen on
-the wire (``blocker: real-parcel`` in ``carrier-research/quickpac.md``), so
-this ships pre-1.0 with one-shot ``WARNING``s on every unconfirmed shape per
+the wire, so this ships pre-1.0 with one-shot ``WARNING``s on every unconfirmed shape per
 CONVENTIONS.md.
 """
 from __future__ import annotations
@@ -64,9 +63,8 @@ NEW_ISSUE_URL = (
 #   an unmatched `26xx` code correctly falls through to the catch-all.
 # * **`3xxx` and `4xxx` are not delivered and not problems.** They are not
 #   cases in the front-end at all — they fall to the `Info` catch-all →
-#   `unknown` + a warning. A CLI this research superseded invented
-#   `>= 3000 -> delivered` / `>= 4000 -> exception`; both are wrong (see
-#   ``carrier-research/api/quickpac/tracking.md#the-clis-band-map-is-wrong``).
+#   `unknown` + a warning. A superseded third-party CLI invented
+#   `>= 3000 -> delivered` / `>= 4000 -> exception`; both are wrong.
 # * **`Info` (the catch-all) must never be mapped to `in_transit`** to make
 #   dashboards look tidy — it is where the unmapped half of the code space
 #   lives, and `unknown` + a warning is the only thing that ever teaches us

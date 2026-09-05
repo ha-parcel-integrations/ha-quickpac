@@ -1,8 +1,7 @@
 """Quickpac public tracking API client.
 
 Two calls: ``GetPublicTracking`` (the parcel lookup) and
-``GetTrackingStartup`` (a parameter-free liveness canary). Full mechanics:
-``carrier-research/api/quickpac/``.
+``GetTrackingStartup`` (a parameter-free liveness canary).
 
 Keyless: no key, no cookie, no CSRF token, no ``Origin``/``Referer``
 requirement — confirmed at the source (the tracking SPA's own axios client
