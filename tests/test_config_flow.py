@@ -21,10 +21,10 @@ def test_normalize_tracking_code_strips_spaces_and_dots():
     assert normalize_tracking_code(None) == ""
 
 
-def test_valid_tracking_code_is_digits_only():
+def test_valid_tracking_code_accepts_any_non_empty_code():
     assert valid_tracking_code("990000123456")
-    assert not valid_tracking_code("QP12345678")  # synthetic CLI placeholder
-    assert not valid_tracking_code("ABC")
+    assert valid_tracking_code("QP12345678")
+    assert valid_tracking_code("ABC")
     assert not valid_tracking_code("")
 
 

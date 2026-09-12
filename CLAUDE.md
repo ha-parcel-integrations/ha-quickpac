@@ -125,11 +125,14 @@ more (`>=3000 -> delivered`, `>=4000 -> exception`) — both `3xxx`/`4xxx` are
 - **`Protocol[]` order is unverified** — `build_history` always sorts on
   `Time` itself rather than trusting the wire order, and warns once (not per
   poll) if the wire order was not already ascending.
-- **Tracking-code format is digits only, no length bound.** Confirmed via the
-  OpenAPI document: the same identifier is `string` on `GetPublicTracking` but
-  `integer($int64)` on `GetLiveTracking`/`GetToken`, which rules out a letter
-  prefix. The `"QP12345678"` a third-party CLI's README uses is a synthetic
-  placeholder that never resolved — do not build a `QP`-prefix regex from it.
+- **Tracking codes are accepted unvalidated (any non-empty string), not gated
+  on a digits-only shape.** The OpenAPI document does show `sendungsNo` typed
+  `string` on `GetPublicTracking` but `integer($int64)` on
+  `GetLiveTracking`/`GetToken`, which rules out a letter prefix — the
+  `"QP12345678"` a third-party CLI's README uses is a synthetic placeholder
+  that never resolved, do not build a `QP`-prefix regex from it — but real
+  formats vary too much and aren't fully confirmed to gate client-side, and an
+  invalid code just comes back "not found" from the API anyway.
 - **`GetToken`, `SaveOption`, `GetLiveTracking` and
   `buildingapi.quickpac.ch` are deliberately not called anywhere** — the first
   three are out of scope (writes, or token-gated data this build skips by

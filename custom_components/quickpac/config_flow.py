@@ -30,17 +30,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# Digits only — confirmed via the OpenAPI document: ``sendungsNo`` is typed
-# ``string`` on ``GetPublicTracking``/``CheckZip`` but ``integer($int64)`` on
-# ``GetLiveTracking``/``GetToken``. The same identifier cannot be int64 on one
-# route and alphanumeric on another, so Quickpac identcodes are digits, and
-# ``IdentCodeFormatted`` exists purely because they are long enough to need
-# grouping. No length bound is documented, so none is enforced here.
-#
-# Not ``QP...``: the ``"QP12345678"`` seen in a third-party CLI's README is a
-# synthetic placeholder that contradicts the int64 typing and never resolved.
-_TRACKING_CODE_RE = re.compile(r"^\d+$")
-
 
 def normalize_tracking_code(value: str) -> str:
     """Return the tracking code with spaces and dots stripped.
@@ -53,8 +42,12 @@ def normalize_tracking_code(value: str) -> str:
 
 
 def valid_tracking_code(value: str) -> bool:
-    """Whether ``value`` looks like a Quickpac tracking code."""
-    return bool(_TRACKING_CODE_RE.match(value))
+    """Accept every non-empty code.
+
+    Quickpac's real identcode shape is not fully confirmed, and an
+    unrecognised code just comes back "not found" from the API anyway.
+    """
+    return bool(value)
 
 
 def _current_parcels(entry: ConfigEntry) -> list[dict[str, str]]:
