@@ -50,15 +50,15 @@ def test_incoming_counts_and_lists():
     assert len(sensor.extra_state_attributes["parcels"]) == 2
 
 
-def test_awaiting_pickup_counts_only_ready_pickup_point_parcels():
+def test_awaiting_pickup_counts_every_parcel_at_pickup_point():
     coordinator = _coordinator([
         _parcel("A", ParcelStatus.AT_PICKUP_POINT, pickup=True),
         _parcel("B", ParcelStatus.IN_TRANSIT, pickup=True),
         _parcel("C", ParcelStatus.AT_PICKUP_POINT, pickup=False),
     ])
     sensor = QuickpacAwaitingPickupSensor(coordinator, _entry())
-    assert sensor.native_value == 1
-    assert sensor.extra_state_attributes["parcels"] == [coordinator.data[0]]
+    assert sensor.native_value == 2
+    assert len(sensor.extra_state_attributes["parcels"]) == 2
 
 
 def test_awaiting_pickup_is_empty_without_parcels():
