@@ -127,7 +127,7 @@
         "unit_of_measurement": "Pakete"
       },
       "awaiting_pickup": {
-        "name": "Bereit zur Abholung",
+        "name": "Abholbereit",
         "unit_of_measurement": "Pakete"
       },
       "next_delivery": {
