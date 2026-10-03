@@ -7,7 +7,7 @@
 
 > 💬 Questions or feedback? Join the discussion on the [Home Assistant community](https://community.home-assistant.io/t/packages-postnl-dhl-nl-dpd-and-gls-parcel-integration/112433/).
 
-> ⚠️ **Pre-1.0 release.** No real Quickpac tracking number has ever been run through this API yet, so the status mapping below is reverse-engineered from the tracking website's own code, not confirmed against live data. Unknown statuses log a one-shot `WARNING` with a link to report them — see [Troubleshooting](#troubleshooting). If you get a real Quickpac parcel, a diagnostics dump after tracking it is the single most useful thing you can contribute.
+> ⚠️ **Pre-1.0 release.** No real Quickpac parcel has been tracked with this integration yet, so the status mapping below is not confirmed against live data. Unknown statuses log a one-shot `WARNING` with a link to report them — see [Troubleshooting](#troubleshooting). If you get a real Quickpac parcel, a diagnostics dump after tracking it is the single most useful thing you can contribute.
 
 A custom Home Assistant integration that tracks your [Quickpac](https://quickpac.ch) (Switzerland) parcels. No account is needed — you enter the tracking code yourself, just like on the Quickpac website.
 
@@ -187,7 +187,7 @@ logger:
 
 - **A parcel shows `unknown` and stays pending** — Quickpac answers the same `400` for "not yet scanned" and "unknown/mistyped code", so this integration cannot always tell them apart. It will pick up automatically once scanned; double-check the code (digits only, no letters) if it never does.
 - **A "liveness canary" WARNING appears** — every `400` is paired with an unrelated, parameter-free health check; if that also fails, Quickpac's API likely moved. [Open an issue](https://github.com/ha-parcel-integrations/ha-quickpac/issues/new) — this is a different problem from an individual parcel not resolving.
-- **A status logs "Unrecognised Quickpac status" or "StatusGroup value seen for the first time"** — please [open an issue](https://github.com/ha-parcel-integrations/ha-quickpac/issues/new) with the logged line so the mapping can be extended. No real Quickpac response has ever been captured for this integration, so every report genuinely helps.
+- **A status logs "Unrecognised Quickpac status" or "StatusGroup value seen for the first time"** — please [open an issue](https://github.com/ha-parcel-integrations/ha-quickpac/issues/new) with the logged line so the mapping can be extended. No real Quickpac parcel has been tracked with this integration yet, so every report genuinely helps.
 
 ## Related integrations
 
