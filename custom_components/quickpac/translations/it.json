@@ -1,0 +1,148 @@
+{
+  "title": "Quickpac",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Quickpac",
+        "description": "Il tracciamento Quickpac non richiede account né codice postale: l'hub viene creato subito. Aggiungi i pacchi in seguito tramite le opzioni dell'integrazione o il servizio `quickpac.track_parcel`."
+      }
+    },
+    "abort": {
+      "already_configured": "Quickpac è già configurato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni Quickpac",
+        "sections": {
+          "parcels": {
+            "name": "Pacchi",
+            "data": {
+              "add": "Aggiungi un pacco",
+              "remove": "Rimuovi pacchi"
+            },
+            "data_description": {
+              "add": "Inserisci un codice di tracciamento Quickpac per iniziare a seguirlo. Lo trovi sulla conferma di spedizione o sull'avviso di giacenza."
+            }
+          },
+          "delivered": {
+            "name": "Pacchi consegnati",
+            "data": {
+              "delivered_filter_type": "Filtra per",
+              "delivered_filter_amount": "Quantità"
+            },
+            "data_description": {
+              "delivered_filter_type": "Mostra i pacchi consegnati negli ultimi X giorni, oppure limita ai X più recenti.",
+              "delivered_filter_amount": "Numero di giorni o pacchi da mostrare."
+            }
+          },
+          "history": {
+            "name": "Cronologia pacchi",
+            "data": {
+              "include_history": "Includi cronologia degli stati"
+            },
+            "data_description": {
+              "include_history": "Aggiunge a ogni pacco un attributo di cronologia con ogni aggiornamento di stato (data e ora, stato, testo originale). Disattivato per impostazione predefinita."
+            }
+          }
+        },
+        "menu_options": {
+          "parcels": "Pacchi",
+          "settings": "Impostazioni"
+        }
+      },
+      "parcels": {
+        "title": "Pacchi",
+        "data": {
+          "tracking_codes": "Codici di tracciamento"
+        }
+      },
+      "settings": {
+        "title": "Impostazioni",
+        "data": {
+          "delivered_filter_type": "Pacchi consegnati: filtra per",
+          "delivered_filter_amount": "Pacchi consegnati: quantità",
+          "include_history": "Includi cronologia dello stato"
+        }
+      }
+    },
+    "error": {
+      "invalid_tracking_code": "Non sembra un codice di tracciamento Quickpac.",
+      "already_tracked": "Questo pacco è già monitorato."
+    }
+  },
+  "selector": {
+    "delivered_filter_type": {
+      "options": {
+        "days": "Giorni",
+        "parcels": "Numero di pacchi"
+      }
+    }
+  },
+  "services": {
+    "track_parcel": {
+      "name": "Traccia pacco",
+      "description": "Avvia il tracciamento di un pacco tramite il suo codice di tracciamento Quickpac.",
+      "fields": {
+        "tracking_code": {
+          "name": "Codice di tracciamento",
+          "description": "Il codice di tracciamento Quickpac."
+        }
+      }
+    },
+    "untrack_parcel": {
+      "name": "Interrompi tracciamento pacco",
+      "description": "Interrompe il tracciamento di un pacco tramite il suo codice di tracciamento Quickpac.",
+      "fields": {
+        "tracking_code": {
+          "name": "Codice di tracciamento",
+          "description": "Il codice di tracciamento Quickpac di cui interrompere il tracciamento."
+        }
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "parcel_registered": "Un pacco è stato registrato",
+      "parcel_status_changed": "Lo stato di un pacco è cambiato",
+      "parcel_delivered": "Un pacco è stato consegnato",
+      "parcel_delivery_time_changed": "L'orario di consegna previsto di un pacco è cambiato"
+    }
+  },
+  "entity": {
+    "button": {
+      "refresh": {
+        "name": "Aggiorna"
+      }
+    },
+    "calendar": {
+      "deliveries": {
+        "name": "Consegne"
+      }
+    },
+    "sensor": {
+      "incoming_parcels": {
+        "name": "Pacchi in arrivo",
+        "unit_of_measurement": "pacchi"
+      },
+      "awaiting_pickup": {
+        "name": "Pronto per il ritiro",
+        "unit_of_measurement": "pacchi"
+      },
+      "next_delivery": {
+        "name": "Prossima consegna"
+      },
+      "delivered_parcels": {
+        "name": "Pacchi consegnati",
+        "unit_of_measurement": "pacchi"
+      },
+      "last_update": {
+        "name": "Ultimo aggiornamento riuscito"
+      },
+      "parcel": {
+        "name": "Pacco {barcode}"
+      }
+    }
+  }
+}
