@@ -1,4 +1,5 @@
 """Tests for the Quickpac API client."""
+
 import json
 from unittest.mock import AsyncMock, MagicMock
 
@@ -33,7 +34,9 @@ def _session_returning(status: int, body: object = None) -> MagicMock:
     return session
 
 
-def _session_with(*, tracking_status: int, tracking_body: object, canary_status: int) -> MagicMock:
+def _session_with(
+    *, tracking_status: int, tracking_body: object, canary_status: int
+) -> MagicMock:
     """A session whose two distinct URLs answer independently."""
     tracking_ctx = _ctx(_response(tracking_status, tracking_body))
     canary_ctx = _ctx(_response(canary_status, {"TextMap": {}}))

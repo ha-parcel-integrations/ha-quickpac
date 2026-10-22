@@ -1,4 +1,5 @@
 """Calendar platform for the Quickpac parcel tracker integration."""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -20,17 +21,20 @@ PARALLEL_UPDATES = 0
 _DEFAULT_EVENT_DURATION = timedelta(hours=1)
 
 
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: QuickpacConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Quickpac deliveries calendar from a config entry."""
-    async_add_entities([QuickpacDeliveriesCalendar(entry.runtime_data.coordinator, entry)])
+    async_add_entities(
+        [QuickpacDeliveriesCalendar(entry.runtime_data.coordinator, entry)]
+    )
 
 
-class QuickpacDeliveriesCalendar(CoordinatorEntity[QuickpacCoordinator], CalendarEntity):
+class QuickpacDeliveriesCalendar(
+    CoordinatorEntity[QuickpacCoordinator], CalendarEntity
+):
     """A read-only calendar of expected Quickpac deliveries.
 
     Each active tracked parcel with a known delivery moment becomes an event.

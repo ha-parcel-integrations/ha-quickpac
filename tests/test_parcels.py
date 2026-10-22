@@ -4,7 +4,8 @@ These need no Home Assistant instance — the whole point of keeping
 ``parcels.py`` free of I/O is that the carrier-specific mapping (the part you
 rewrite per carrier) can be tested as plain functions.
 """
-from datetime import datetime, timedelta, timezone
+
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -49,7 +50,7 @@ def _reset_warnings():
 
 
 @pytest.mark.parametrize(
-    "code,expected",
+    ("code", "expected"),
     [
         (1000, ParcelStatus.REGISTERED),
         # The 26-hundreds band splits three ways — this is the trap a refactor
@@ -339,7 +340,9 @@ def test_normalize_warns_on_schema_drift(caplog):
     raw = delivered_sample()
     raw["UnexpectedNewField"] = "surprise"
     normalize_parcel(raw)
-    assert "schema drift" in caplog.text.lower() or "unexpected top-level" in caplog.text
+    assert (
+        "schema drift" in caplog.text.lower() or "unexpected top-level" in caplog.text
+    )
 
 
 def test_normalize_warns_when_token_infos_populated_unexpectedly(caplog):
@@ -399,7 +402,7 @@ def _entry(filter_type: str, amount: int) -> MockConfigEntry:
 
 
 def _delivered_pair() -> list[dict]:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return [
         {"barcode": "RECENT", "delivered_at": (now - timedelta(days=1)).isoformat()},
         {"barcode": "OLD", "delivered_at": (now - timedelta(days=30)).isoformat()},
@@ -429,4 +432,4 @@ def test_capabilities_are_known_values():
 
 def test_capabilities_are_url_and_history_only():
     """Everything else sits behind the token-gated GetToken call this build skips."""
-    assert CAPABILITIES == {"url", "history"}
+    assert {"url", "history"} == CAPABILITIES

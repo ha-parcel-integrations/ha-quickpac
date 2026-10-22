@@ -14,10 +14,11 @@ reverse-engineered from the tracking SPA's own icon-selection logic (see
 the wire, so this ships pre-1.0 with one-shot ``WARNING``s on every unconfirmed shape per
 CONVENTIONS.md.
 """
+
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 import logging
-from datetime import datetime, timedelta, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -49,6 +50,7 @@ NEW_ISSUE_URL = (
     "https://github.com/ha-parcel-integrations/ha-quickpac/issues/new"
     "?template=unrecognised_status.yml"
 )
+
 
 # Quickpac status vocabulary, reverse-engineered from the tracking SPA's own
 # icon-selection logic (app.js), not from any documentation Quickpac
@@ -236,11 +238,11 @@ def parse_iso(value: str | None) -> datetime | None:
     if not value:
         return None
     try:
-        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(str(value))
     except ValueError:
         return None
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
+        parsed = parsed.replace(tzinfo=UTC)
     return parsed
 
 
@@ -256,7 +258,7 @@ def parse_quickpac_timestamp(value: Any) -> datetime | None:
     if not value:
         return None
     try:
-        parsed = datetime.fromisoformat(str(value).strip().replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(str(value).strip())
     except ValueError:
         _warn_once(
             "timestamp_format",
@@ -391,7 +393,9 @@ def _delivered_at(dated_protocol: list[tuple[datetime, dict]]) -> str | None:
     newest entry whose own ``Status`` maps to ``delivered`` is the best
     available signal.
     """
-    for timestamp, entry in sorted(dated_protocol, key=lambda item: item[0], reverse=True):
+    for timestamp, entry in sorted(
+        dated_protocol, key=lambda item: item[0], reverse=True
+    ):
         if map_event_status(entry.get("Status")) is ParcelStatus.DELIVERED:
             return timestamp.isoformat()
     return None
@@ -484,14 +488,12 @@ def apply_delivered_filter(parcels: list[dict], entry: ConfigEntry) -> list[dict
     shows.
     """
     options = entry.options
-    filter_type = options.get(
-        CONF_DELIVERED_FILTER_TYPE, DEFAULT_DELIVERED_FILTER_TYPE
-    )
+    filter_type = options.get(CONF_DELIVERED_FILTER_TYPE, DEFAULT_DELIVERED_FILTER_TYPE)
     amount = int(
         options.get(CONF_DELIVERED_FILTER_AMOUNT, DEFAULT_DELIVERED_FILTER_AMOUNT)
     )
     if filter_type == "days":
-        cutoff = datetime.now(timezone.utc) - timedelta(days=amount)
+        cutoff = datetime.now(UTC) - timedelta(days=amount)
         return [
             parcel
             for parcel in parcels

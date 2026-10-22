@@ -9,6 +9,7 @@ schema-conformant, not carrier-confirmed. Keep them in one module rather than
 inline in each test — when a real payload turns up, there is then exactly one
 place to fix.
 """
+
 from __future__ import annotations
 
 ACTIVE_CODE = "990000123456"
@@ -61,7 +62,9 @@ def delivered_sample(code: str = DELIVERED_CODE) -> dict:
         "QuickpicIsOrigin": False,
         "QuickpicHasOrder": False,
         "Protocol": [
-            event(1000, "2026-04-27T23:03:58", "Sendung angekündigt", group="Announcement"),
+            event(
+                1000, "2026-04-27T23:03:58", "Sendung angekündigt", group="Announcement"
+            ),
             event(1401, "2026-04-28T15:52:17", "In Bearbeitung", group="Prepare"),
             event(1801, "2026-04-29T08:46:00", "In Zustellung", group="Delivery"),
             event(2100, "2026-04-29T13:12:42", "Zugestellt", group="Delivered"),
@@ -94,7 +97,11 @@ def pickup_sample(code: str = ACTIVE_CODE) -> dict:
             "LastStatusCode": 2600,
             "StatusTooltipText": "Ihre Sendung ist abholbereit.",
             "Protocol": sample["Protocol"]
-            + [event(2600, "2026-04-29T09:30:00", "Bereit zur Abholung", group="Pickup")],
+            + [
+                event(
+                    2600, "2026-04-29T09:30:00", "Bereit zur Abholung", group="Pickup"
+                )
+            ],
         }
     )
     return sample
