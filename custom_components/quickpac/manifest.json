@@ -1,6 +1,7 @@
 {
   "domain": "quickpac",
   "name": "Quickpac",
+  "categories": ["productivity_information"],
   "codeowners": [
     "@peter-mdf"
   ],
