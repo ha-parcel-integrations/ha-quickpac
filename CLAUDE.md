@@ -40,9 +40,8 @@ Where this repo diverges from it, that is recorded below under
 
 ## Carrier-specific notes
 
-**API mechanics live in `carrier-research/quickpac/api/` (private research repo)** — the
-endpoint, the OpenAPI-pinned payload, the status-code table and probe results.
-Do not duplicate them here; this file is HA-integration decisions only.
+This file is HA-integration decisions only; the endpoint, payload and status-code
+table are in the code (`parcels.py`) and `tests/payloads.py`.
 
 Closest sibling: **`ha-planzer`** — the other Swiss keyless code-based carrier,
 `model: code`, `auth: none`, number alone, no postcode second factor, naive
@@ -50,8 +49,7 @@ timestamps read as `Europe/Zurich`. Mirror it when in doubt.
 
 ### No real parcel has ever been seen — this ships pre-1.0 on purpose
 
-`carrier-research/quickpac.md` carries `evidence: "semantic-404"`: every probe
-against `GetPublicTracking` has returned `400`, never a populated `200`. The
+Every probe against `GetPublicTracking` has returned `400`, never a populated `200`. The
 payload shape and status-code table are **schema-confirmed** (Quickpac
 publishes its own OpenAPI document — `swagger-v1.json`) but **not
 carrier-confirmed** — nobody has watched a real shipment move through them.
@@ -68,9 +66,8 @@ right.
 
 `LastStatusCode` (and `Protocol[].Status`, same vocabulary) is a number, not a
 string enum — `_bucket()` in `parcels.py` implements the seven-bucket table
-reverse-engineered from the tracking SPA's own icon-selection JS (deobfuscated
-in `carrier-research/quickpac/api/tracking.md`), not from any Quickpac
-documentation.
+reverse-engineered from the tracking SPA's own icon-selection JS, not from any
+Quickpac documentation.
 
 **`2600` / `2601` / `2604` must resolve to three different canonical statuses**
 (`at_pickup_point` / `in_transit` / `in_transit`-as-detour) even though they
@@ -95,21 +92,20 @@ more (`>=3000 -> delivered`, `>=4000 -> exception`) — both `3xxx`/`4xxx` are
   `at_pickup_point` still works without it. Revisit only if a Swiss user asks
   for the Abholstelle address specifically — additive later as an optional
   per-parcel `{zip, lastname}`, nothing about the public path changes.
-- **`pickup` still reflects the real state** (`True` exactly when `status` is
-  `at_pickup_point`, i.e. `LastStatusCode == 2600`) even though `pickup_point`
-  stays `None` — "code 2600 carries the state, just not the address." This is
-  this build's own call, not copied verbatim from a plan table that read
-  `False`/`None` for both — a dashboard showing "ready for pickup" should not
-  go dark just because the address is unavailable.
-  **Unlike GLS/Dragonfly**, where `pickup` is an independent delivery-method
-  signal derived from raw fields (GLS: `isPickup`/`isParcelShop`; Dragonfly:
-  `task_type`) that can be `True` *before* arrival — which is what lets GLS
-  ship a dedicated "en route to parcel shop" sensor distinct from "awaiting
-  pickup" — Quickpac's public payload has no such independent signal. Here
-  `pickup` can never lead `status`; it only flips true the same poll `status`
-  already reports `at_pickup_point`. Don't port a GLS-style pre-arrival
-  pickup sensor to this carrier without first getting that signal via the
-  token (see the "one real decision" above).
+- **`pickup` is true once the parcel reached `at_pickup_point`** (the
+  status or any `Protocol` entry is `2600`) and stays true after collection,
+  while returning and on a problem; `2104` "sicher deponiert" is a delivery,
+  not a pickup. `pickup_point` stays `None` because the address is gated.
+  There is no route field before arrival, so `pickup` cannot lead `status`.
+- **Both pickup sensors exist.** `awaiting_pickup` (status `at_pickup_point`)
+  and `en_route_to_pickup_point` (`pickup`, not `at_pickup_point`, not
+  `returning`). Without a pre-arrival signal `en_route_to_pickup_point`
+  reads 0 until a parcel shows the pickup route before it arrives. Evidence still missing: a collected
+  pickup parcel's real `2600` then `21xx` sequence.
+- **`planned_from`/`planned_to` go through the shared window helpers** and are
+  `None` because the delivery window is gated; `next_delivery` and the
+  calendar skip a window that has ended and show a whole-day window as an
+  all-day event.
 - **`weight`/`dimensions` are always `None`** — not in the schema. Reflected in
   `const.py`'s `CAPABILITIES` (feeds the docs site's comparison table) — keep
   the two in agreement if that ever changes.
@@ -156,5 +152,4 @@ python -m pytest tests/ --cov=custom_components.quickpac
 
 Coverage must stay **above 95%** (silver `test-coverage` rule). Run before
 committing. A code change updates the README + this file + `docs/` in the same
-commit; the API reference lives in this carrier's own directory under the
-private `carrier-research/quickpac/api/`, never in this repo.
+commit.

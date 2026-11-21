@@ -1,9 +1,9 @@
 """Sample Quickpac API payloads shared by the test modules.
 
 Shapes follow ``TrackingInfoResponse`` as pinned by Quickpac's own OpenAPI
-document (``carrier-research/api/quickpac/swagger-v1.json``) and the status
+document (``swagger-v1.json``) and the status
 vocabulary reverse-engineered from the tracking SPA's own icon-selection
-logic (``carrier-research/api/quickpac/tracking.md``). **No populated ``200``
+logic. **No populated ``200``
 has ever been observed on the wire** — every value below is
 schema-conformant, not carrier-confirmed. Keep them in one module rather than
 inline in each test — when a real payload turns up, there is then exactly one

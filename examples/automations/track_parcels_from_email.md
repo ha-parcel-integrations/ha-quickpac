@@ -10,7 +10,7 @@ Quickpac is a **code-based** carrier: it has no account inbox, so every parcel m
 new e-mail ──imap_content──▶ automation ──▶ looks like a shipping mail? ──▶ ai_task.generate_data ──▶ quickpac.track_parcel
 ```
 
-**No regex fast path, unlike this integration's siblings.** Quickpac identcodes are confirmed to be **plain digits with no letter prefix** (see `carrier-research/api/quickpac/tracking.md`), but no real identcode has ever been captured, so the *length* is unconfirmed. A bare digit-string regex would match order numbers, invoice numbers and phone numbers just as readily as a tracking code — there is nothing safe to anchor on yet. This recipe goes straight to the AI fallback.
+**No regex fast path, unlike this integration's siblings.** Quickpac identcodes are confirmed to be **plain digits with no letter prefix**, but no real identcode has ever been captured, so the *length* is unconfirmed. A bare digit-string regex would match order numbers, invoice numbers and phone numbers just as readily as a tracking code — there is nothing safe to anchor on yet. This recipe goes straight to the AI fallback.
 
 ## Prerequisites
 
@@ -79,7 +79,7 @@ Paste [`track_parcels_from_email.yaml`](track_parcels_from_email.yaml) and adapt
 
 ### Tracking-code format
 
-Confirmed: **plain digits, no letter prefix** — Quickpac's own OpenAPI document types the identcode as `integer($int64)` on two of its routes, which rules out a letter prefix outright. Unconfirmed: the length. No real identcode has ever been captured (`carrier-research/quickpac.md`, `blocker: real-parcel`), so this example cannot anchor a regex the way `ha-planzer`'s (`[0-9]{4,6}[.][0-9]{8,12}`) or `ha-dragonfly`'s do — a bare digit string would match order numbers, invoice numbers and phone numbers just as readily. Once a real identcode's length is confirmed, add a regex fast path here (see those two repos' examples for the pattern) and open an issue/PR so the next person benefits.
+Confirmed: **plain digits, no letter prefix** — Quickpac's own OpenAPI document types the identcode as `integer($int64)` on two of its routes, which rules out a letter prefix outright. Unconfirmed: the length. No real identcode has ever been captured, so this example cannot anchor a regex the way `ha-planzer`'s (`[0-9]{4,6}[.][0-9]{8,12}`) or `ha-dragonfly`'s do — a bare digit string would match order numbers, invoice numbers and phone numbers just as readily. Once a real identcode's length is confirmed, add a regex fast path here (see those two repos' examples for the pattern) and open an issue/PR so the next person benefits.
 
 ### Design notes
 

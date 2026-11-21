@@ -3,8 +3,7 @@
 # confirmation lands in your inbox — no manual entry.
 #
 # AI-only, deliberately: Quickpac identcodes are **plain digits with no
-# letter prefix** and no confirmed length (see CLAUDE.md and
-# carrier-research/api/quickpac/tracking.md — no real identcode has ever been
+# letter prefix** and no confirmed length (see CLAUDE.md — no real identcode has ever been
 # captured). A bare digit-string regex would match order numbers, invoice
 # numbers and phone numbers just as readily as a tracking code, so there is
 # no safe fast-path regex to write yet. This recipe goes straight to the AI

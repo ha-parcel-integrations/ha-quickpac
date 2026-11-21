@@ -124,6 +124,7 @@ Standard HA removal applies: **Settings → Devices & Services → Quickpac → 
 | `sensor.quickpac_incoming_parcels` | Number of active tracked parcels, full list under the `parcels` attribute |
 | `sensor.quickpac_parcel_<code>` | One per tracked parcel; state is the canonical status, attributes carry the full normalised parcel |
 | `sensor.quickpac_next_delivery` | Earliest expected delivery moment across all active parcels |
+| `sensor.quickpac_en_route_to_pickup_point` | Incoming parcels on their way to a pickup point; reads 0 until a parcel shows the pickup route before it arrives |
 | `sensor.quickpac_awaiting_pickup` | Incoming parcels that are ready to collect at a pickup point |
 | `sensor.quickpac_delivered_parcels` | Recently delivered parcels (see the retention option) |
 | `sensor.quickpac_last_successful_update` | Diagnostic: when Quickpac was last polled successfully |
