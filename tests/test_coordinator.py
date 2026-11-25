@@ -661,3 +661,35 @@ async def test_a_parcel_the_delivered_list_leaves_out_still_fires_delivered(hass
 
     assert sorted(e.data["barcode"] for e in delivered) == sorted([first, second])
     assert len(coordinator.delivered) == 1
+
+
+async def test_user_contents_overlays_the_parcel_and_the_events(hass):
+    entry = _entry_with([{CONF_TRACKING_CODE: ACTIVE_CODE}])
+    entry.add_to_hass(hass)
+    client = AsyncMock()
+    coordinator = QuickpacCoordinator(hass, client, entry)
+    coordinator.contents_store.async_set(ACTIVE_CODE, "Running shoes")
+    delivered = []
+    hass.bus.async_listen(f"{DOMAIN}_parcel_delivered", lambda e: delivered.append(e))
+
+    client.async_get_parcel.return_value = active_sample(ACTIVE_CODE)
+    data = await coordinator._async_update_data()
+    assert data[0]["contents"] == "Running shoes"
+    client.async_get_parcel.return_value = delivered_sample(ACTIVE_CODE)
+    await coordinator._async_update_data()
+    await hass.async_block_till_done()
+
+    assert coordinator.delivered[0]["contents"] == "Running shoes"
+    assert delivered[0].data["contents"] == "Running shoes"
+
+
+async def test_a_parcel_without_a_stored_value_has_no_contents(hass):
+    entry = _entry_with([{CONF_TRACKING_CODE: ACTIVE_CODE}])
+    entry.add_to_hass(hass)
+    client = AsyncMock()
+    client.async_get_parcel.return_value = active_sample()
+    coordinator = QuickpacCoordinator(hass, client, entry)
+
+    data = await coordinator._async_update_data()
+
+    assert data[0]["contents"] is None

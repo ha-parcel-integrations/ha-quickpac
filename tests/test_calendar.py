@@ -134,3 +134,13 @@ def test_moment_stretched_to_end_of_day_stays_timed():
         ]
     )
     assert isinstance(cal._events()[0].start, datetime)
+
+
+def test_event_title_prefers_contents_then_sender_then_barcode():
+    parcel = _parcel("SOON", planned_from="2099-01-01T10:00:00Z")
+    assert _cal([{**parcel, "contents": "Running shoes"}]).event.summary == (
+        "Running shoes"
+    )
+    assert _cal([{**parcel, "contents": None}]).event.summary == "Example Sender"
+    bare = {**parcel, "contents": None, "sender": None}
+    assert _cal([bare]).event.summary == "Parcel SOON"

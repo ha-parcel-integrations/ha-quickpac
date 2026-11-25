@@ -298,6 +298,7 @@ class QuickpacNextDeliverySensor(CoordinatorEntity[QuickpacCoordinator], SensorE
             "barcode": earliest.get("barcode"),
             "sender": earliest.get("sender"),
             "receiver": earliest.get("receiver"),
+            "contents": earliest.get("contents"),
         }
 
 

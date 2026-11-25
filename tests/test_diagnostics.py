@@ -14,6 +14,7 @@ async def test_diagnostics_redacts_and_counts(hass):
             "barcode": "990000123456",
             "sender": None,
             "receiver": None,
+            "contents": "Running shoes",
             "status": "out_for_delivery",
             "raw": {
                 "IdentCode": "990000123456",
@@ -38,6 +39,7 @@ async def test_diagnostics_redacts_and_counts(hass):
     # tracking codes and payload PII are redacted, at every nesting level
     assert result["entry_options"]["parcels"][0]["tracking_code"] == "**REDACTED**"
     assert result["incoming"][0]["barcode"] == "**REDACTED**"
+    assert result["incoming"][0]["contents"] == "**REDACTED**"
     assert result["incoming"][0]["raw"]["IdentCode"] == "**REDACTED**"
     assert result["incoming"][0]["raw"]["IdentCodeFormatted"] == "**REDACTED**"
     assert result["incoming"][0]["raw"]["TokenInfos"] == "**REDACTED**"
